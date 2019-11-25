@@ -50,6 +50,9 @@
      <Compile Include="Assets\Scripts\Common\CallBack.cs" />
      <Compile Include="Assets\Scripts\Common\EventCenter.cs" />
      <Compile Include="Assets\Scripts\Common\EventDefine.cs" />
+     <Compile Include="Assets\Scripts\Common\ResourceManager.cs" />
+     <Compile Include="Assets\Scripts\Models\GameModel.cs" />
+     <Compile Include="Assets\Scripts\Models\Models.cs" />
      <Compile Include="Assets\Scripts\Net\ClientPeer.cs" />
      <Compile Include="Assets\Scripts\Net\EncodeTool.cs" />
      <Compile Include="Assets\Scripts\Net\Hander\AccountHandler.cs" />
@@ -61,7 +64,11 @@
      <Compile Include="Assets\Scripts\Net\NetMsgCenter.cs" />
      <Compile Include="Assets\Scripts\UI\Hint.cs" />
      <Compile Include="Assets\Scripts\UI\LoginPanel.cs" />
+     <Compile Include="Assets\Scripts\UI\MainPanel.cs" />
+     <Compile Include="Assets\Scripts\UI\RankListPanel.cs" />
+     <Compile Include="Assets\Scripts\UI\RechargePanel.cs" />
      <Compile Include="Assets\Scripts\UI\RegisterPanel.cs" />
+     <Compile Include="Assets\Scripts\UI\RoomChoosePanel.cs" />
      <None Include="Assets\Demigiant\DOTweenPro\readme.txt" />
      <None Include="Assets\Demigiant\DOTween\DOTween50.xml" />
      <None Include="Assets\Demigiant\DOTween\DOTween46.xml" />
@@ -107,6 +114,9 @@
  </Reference>
  <Reference Include="DOTweenPro">
  <HintPath>D:/GitProject/ZJHGameClient/Assets/Demigiant/DOTweenPro/DOTweenPro.dll</HintPath>
+ </Reference>
+ <Reference Include="Protocol">
+ <HintPath>D:/GitProject/ZJHGameClient/Assets/Scripts/Protocol.dll</HintPath>
  </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

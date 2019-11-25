@@ -12,6 +12,7 @@ public class NetMsgCenter : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+        DontDestroyOnLoad(gameObject);
         client = new ClientPeer();
         client.Connect("127.0.0.1", 6666);
     }
@@ -42,6 +43,7 @@ public class NetMsgCenter : MonoBehaviour
     /// <param name="msg"></param>
     private void ProcessServerSendMsg(NetMsg msg)
     {
+        Debug.Log("--wangzhi--接收消息--" + msg.opCode + "  " + msg.subCode + "   " + msg.value);
         switch (msg.opCode)
         {
             case OpCode.Account:
@@ -66,6 +68,8 @@ public class NetMsgCenter : MonoBehaviour
     #region 发送消息
     public void SendMsg(int opCode,int subCode,object value)
     {
+        
+        Debug.Log("--wangzhi--发送消息--"+opCode+"  "+subCode);
         client.SendMsg(opCode, subCode, value);
     }
 

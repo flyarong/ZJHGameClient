@@ -18,6 +18,7 @@ public class LoginPanel : MonoBehaviour {
 
         EventCenter.AddListener(EventDefine.ShowLoginPanel, Show);
 
+
         Init();
     }
 

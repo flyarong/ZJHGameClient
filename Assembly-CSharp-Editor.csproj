@@ -135,6 +135,9 @@
  <Reference Include="DOTweenProEditor">
  <HintPath>D:/GitProject/ZJHGameClient/Assets/Demigiant/DOTweenPro/Editor/DOTweenProEditor.dll</HintPath>
  </Reference>
+ <Reference Include="Protocol">
+ <HintPath>D:/GitProject/ZJHGameClient/Assets/Scripts/Protocol.dll</HintPath>
+ </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Assembly-CSharp.csproj">

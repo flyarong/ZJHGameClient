@@ -3,4 +3,9 @@
     ShowRegisterPanel,
     ShowLoginPanel,
     Hint,
+    ShowRankListPanel,
+    ShowRankListDto,
+    ShowRechargePanel,
+    UpdateCoinCount,
+    ShowRoomChoosePanel,
 }
