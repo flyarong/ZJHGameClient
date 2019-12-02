@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using UnityEngine.SceneManagement;
 
 enum GameType
 {
@@ -63,7 +64,7 @@ public class RoomChoosePanel : MonoBehaviour {
     private void EnterRoom(int bottomStakes,int topStakes)
     {
         Models.GameModel.BottomStakes = bottomStakes;
-        Models.GameModel.TopStakes = bottomStakes;
+        Models.GameModel.TopStakes = topStakes;
 
         switch (m_GameType)
         {
@@ -72,6 +73,7 @@ public class RoomChoosePanel : MonoBehaviour {
                 break;
             case GameType.StandAlone:
                 //进入单机游戏场景
+                SceneManager.LoadScene("StandAlone");
                 break;
             default:
                 break;

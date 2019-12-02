@@ -48,9 +48,17 @@
   <ItemGroup>
      <Compile Include="Assets\Demigiant\DOTweenPro\DOTweenAnimation.cs" />
      <Compile Include="Assets\Scripts\Common\CallBack.cs" />
+     <Compile Include="Assets\Scripts\Common\Card.cs" />
+     <Compile Include="Assets\Scripts\Common\CardType.cs" />
      <Compile Include="Assets\Scripts\Common\EventCenter.cs" />
      <Compile Include="Assets\Scripts\Common\EventDefine.cs" />
      <Compile Include="Assets\Scripts\Common\ResourceManager.cs" />
+     <Compile Include="Assets\Scripts\Game\StandAlone\BaseManager_Stand.cs" />
+     <Compile Include="Assets\Scripts\Game\StandAlone\ComputerBaseManager_Stand.cs" />
+     <Compile Include="Assets\Scripts\Game\StandAlone\LeftManager_Stand.cs" />
+     <Compile Include="Assets\Scripts\Game\StandAlone\RightManager_Stand.cs" />
+     <Compile Include="Assets\Scripts\Game\StandAlone\SelfManager_Stand.cs" />
+     <Compile Include="Assets\Scripts\Game\StandAlone\ZJHManager_Stand.cs" />
      <Compile Include="Assets\Scripts\Models\GameModel.cs" />
      <Compile Include="Assets\Scripts\Models\Models.cs" />
      <Compile Include="Assets\Scripts\Net\ClientPeer.cs" />
@@ -69,6 +77,8 @@
      <Compile Include="Assets\Scripts\UI\RechargePanel.cs" />
      <Compile Include="Assets\Scripts\UI\RegisterPanel.cs" />
      <Compile Include="Assets\Scripts\UI\RoomChoosePanel.cs" />
+     <Compile Include="Assets\Scripts\UI\StakesCountHint.cs" />
+     <Compile Include="Assets\Scripts\UI\VSPanel_Stand.cs" />
      <None Include="Assets\Demigiant\DOTweenPro\readme.txt" />
      <None Include="Assets\Demigiant\DOTween\DOTween50.xml" />
      <None Include="Assets\Demigiant\DOTween\DOTween46.xml" />
