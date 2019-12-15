@@ -15,7 +15,11 @@ public class ZJHManager_Stand : MonoBehaviour
     private LeftManager_Stand m_LeftManager;
     private RightManager_Stand m_RightManager;
     private SelfManager_Stand m_SelfManager;
+    private AudioSource m_AudioSource;
 
+    public bool LeftIsGiveUp { get { return m_LeftManager.m_IsGiveUpCard; } }
+
+    public bool RightIsGiveUp { get { return m_RightManager.m_IsGiveUpCard; } }
     /// <summary>
     /// 当前发牌的游标
     /// </summary>
@@ -23,7 +27,7 @@ public class ZJHManager_Stand : MonoBehaviour
     /// <summary>
     /// 当前下注的游标
     /// </summary>
-    private int m_CurrentStakesIndex = 0;
+    public int m_CurrentStakesIndex = 0;
 
     /// <summary>
     /// 牌库
@@ -56,6 +60,7 @@ public class ZJHManager_Stand : MonoBehaviour
 
     private void Init()
     {
+        m_AudioSource = GetComponent<AudioSource>();
         m_RightManager = transform.Find("Right").GetComponent<RightManager_Stand>();
         m_LeftManager = transform.Find("Left").GetComponent<LeftManager_Stand>();
         m_SelfManager = GetComponentInChildren<SelfManager_Stand>();
@@ -173,6 +178,7 @@ public class ZJHManager_Stand : MonoBehaviour
         //3.发牌
         for (int i = 0; i < 9; i++)
         {
+            m_AudioSource.Play();
             if (m_CurrentSendCardIndex % 3 == 0)
             {
                 //自身发牌
@@ -228,17 +234,19 @@ public class ZJHManager_Stand : MonoBehaviour
     }
 
     /// <summary>
-    /// 右边玩家比牌
+    /// 右边玩家比牌S
     /// </summary>
     public void RightPlayerCompare()
     {
         if (m_SelfManager.m_IsGiveUpCard)
         {
             //和左边玩家比牌
+            EventCenter.Broadcast(EventDefine.VSAI, (BaseManager_Stand)m_RightManager, (BaseManager_Stand)m_LeftManager);
         }
         else
         {
             //和Self比牌
+            EventCenter.Broadcast(EventDefine.VSWithSelf, (BaseManager_Stand)m_RightManager, (BaseManager_Stand)m_SelfManager,"右边玩家","我");
         }
     }
 
@@ -250,10 +258,91 @@ public class ZJHManager_Stand : MonoBehaviour
         if (m_SelfManager.m_IsGiveUpCard)
         {
             //和右边玩家比牌
+            EventCenter.Broadcast(EventDefine.VSAI, (BaseManager_Stand)m_LeftManager, (BaseManager_Stand)m_RightManager);
         }
         else
         {
             //和Self比牌
+            EventCenter.Broadcast(EventDefine.VSWithSelf, (BaseManager_Stand)m_LeftManager, (BaseManager_Stand)m_SelfManager, "左边玩家", "我");
         }
+    }
+
+    /// <summary>
+    /// 自身与左边玩家比牌
+    /// </summary>
+    public void SelfComparedLeft()
+    {
+        EventCenter.Broadcast(EventDefine.VSWithSelf, (BaseManager_Stand)m_SelfManager, (BaseManager_Stand)m_LeftManager, "我", "左边玩家");
+    }
+
+    /// <summary>
+    /// 自身与右边玩家比牌
+    /// </summary>
+    public void SelfCompareRight()
+    {
+        EventCenter.Broadcast(EventDefine.VSWithSelf, (BaseManager_Stand)m_SelfManager, (BaseManager_Stand)m_RightManager, "我", "右边玩家");
+    }
+
+    /// <summary>
+    /// 判断自身玩家是否胜利
+    /// </summary>
+    /// <returns></returns>
+    public bool IsSelfWin()
+    {
+        if (m_LeftManager.m_IsGiveUpCard && m_RightManager.m_IsGiveUpCard)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// 自身玩家胜利
+    /// </summary>
+    public void SelfWin()
+    {
+        EventCenter.Broadcast(EventDefine.GameOver, -m_LeftManager.m_StakesSum, m_SelfManager.m_StakesSum, -m_RightManager.m_StakesSum);
+    }
+
+    /// <summary>
+    /// 左边玩家胜利
+    /// </summary>
+    public void LeftWin()
+    {
+        EventCenter.Broadcast(EventDefine.GameOver, m_LeftManager.m_StakesSum, -m_SelfManager.m_StakesSum, -m_RightManager.m_StakesSum);
+    }
+
+    /// <summary>
+    /// 右边玩家胜利
+    /// </summary>
+    public void RightWin()
+    {
+        EventCenter.Broadcast(EventDefine.GameOver, -m_LeftManager.m_StakesSum, -m_SelfManager.m_StakesSum, m_RightManager.m_StakesSum);
+    }
+
+    /// <summary>
+    /// 判断左边玩家是否胜利
+    /// </summary>
+    /// <returns></returns>
+    public bool IsLeftWin()
+    {
+        if (m_SelfManager.m_IsGiveUpCard && m_RightManager.m_IsGiveUpCard)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// 判断自身玩家是否胜利
+    /// </summary>
+    /// <returns></returns>
+    public bool IsRightWin()
+    {
+        if (m_LeftManager.m_IsGiveUpCard && m_SelfManager.m_IsGiveUpCard)
+        {
+            return true;
+        }
+        return false;
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 
-public class BaseManager_Stand : MonoBehaviour {
+public abstract class BaseManager_Stand : MonoBehaviour {
 
     public GameObject go_CardPre;
 
@@ -41,10 +41,16 @@ public class BaseManager_Stand : MonoBehaviour {
     protected float m_Timer = 0.0f;
 
     //总下注数
-    protected int m_StakesSum = 0;
+    public int m_StakesSum = 0;
 
     //是否弃牌
     public bool m_IsGiveUpCard = false;
+
+    //抽象方法输
+    public abstract void Lose();
+
+    //抽象方法赢
+    public abstract void Win();
     
     public void BecomeBanker()
     {

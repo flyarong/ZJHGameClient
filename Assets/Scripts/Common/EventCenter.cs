@@ -22,6 +22,49 @@ public class EventCenter
         }
     }
 
+    /// <summary>
+    /// 添加监听,四个参数
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="eventType"></param>
+    /// <param name="callBack"></param>
+    public static void AddListener<T, X, Y, Z>(EventDefine eventType, CallBack<T, X, Y, Z> callBack)
+    {
+        if (!m_EventTable.ContainsKey(eventType))
+        {
+            m_EventTable.Add(eventType, null);
+        }
+        Delegate d = m_EventTable[eventType];
+        if (d != null && d.GetType() != callBack.GetType())
+        {
+            throw new Exception(string.Format("委托类型不同，需要添加新的委托类型"));
+        }
+        m_EventTable[eventType] = (CallBack<T, X, Y, Z>)m_EventTable[eventType] + callBack;
+
+    }
+
+    /// <summary>
+    /// 添加监听,三个参数
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="eventType"></param>
+    /// <param name="callBack"></param>
+    public static void AddListener<T, X, Y>(EventDefine eventType, CallBack<T, X, Y> callBack)
+    {
+        if (!m_EventTable.ContainsKey(eventType))
+        {
+            m_EventTable.Add(eventType, null);
+        }
+        Delegate d = m_EventTable[eventType];
+        if (d != null && d.GetType() != callBack.GetType())
+        {
+            throw new Exception(string.Format("委托类型不同，需要添加新的委托类型"));
+        }
+        m_EventTable[eventType] = (CallBack<T, X, Y>)m_EventTable[eventType] + callBack;
+
+    }
+
+
     private static void OnListenerRemoving(EventDefine eventType, Delegate callBack)
     {
         if (m_EventTable.ContainsKey(eventType))
@@ -210,6 +253,66 @@ public class EventCenter
     }
 
     /// <summary>
+    /// 移除监听,三个参数
+    /// </summary>
+    /// <param name="eventType"></param>
+    /// <param name="callBack"></param>
+    public static void RemoveListener<T, X, Y>(EventDefine eventType, CallBack<T, X, Y> callBack)
+    {
+        if (m_EventTable.ContainsKey(eventType))
+        {
+            Delegate d = m_EventTable[eventType];
+            if (d == null)
+            {
+                throw new Exception(string.Format("移除监听错误：事件{0}没有对应的委托", eventType));
+            }
+            else if (d.GetType() != callBack.GetType())
+            {
+                throw new Exception(string.Format("移除监听错误：尝试为事件{0}移除不同类型的委托，当前委托类型为{1}，要移除的委托类型为{2}", eventType, d.GetType(), callBack.GetType()));
+            }
+        }
+        else
+        {
+            throw new Exception(string.Format("移除监听错误，没有事件码{0}", eventType));
+        }
+        m_EventTable[eventType] = (CallBack<T, X, Y>)m_EventTable[eventType] - callBack;
+        if (m_EventTable[eventType] == null)
+        {
+            m_EventTable.Remove(eventType);
+        }
+    }
+
+    /// <summary>
+    /// 移除监听,三个参数
+    /// </summary>
+    /// <param name="eventType"></param>
+    /// <param name="callBack"></param>
+    public static void RemoveListener<T, X, Y, Z>(EventDefine eventType, CallBack<T, X, Y, Z> callBack)
+    {
+        if (m_EventTable.ContainsKey(eventType))
+        {
+            Delegate d = m_EventTable[eventType];
+            if (d == null)
+            {
+                throw new Exception(string.Format("移除监听错误：事件{0}没有对应的委托", eventType));
+            }
+            else if (d.GetType() != callBack.GetType())
+            {
+                throw new Exception(string.Format("移除监听错误：尝试为事件{0}移除不同类型的委托，当前委托类型为{1}，要移除的委托类型为{2}", eventType, d.GetType(), callBack.GetType()));
+            }
+        }
+        else
+        {
+            throw new Exception(string.Format("移除监听错误，没有事件码{0}", eventType));
+        }
+        m_EventTable[eventType] = (CallBack<T, X, Y, Z>)m_EventTable[eventType] - callBack;
+        if (m_EventTable[eventType] == null)
+        {
+            m_EventTable.Remove(eventType);
+        }
+    }
+
+    /// <summary>
     /// 广播监听，没有参数
     /// </summary>
     /// <param name="eventType"></param>
@@ -264,6 +367,48 @@ public class EventCenter
             if (callBack != null)
             {
                 callBack(arg1, arg2);
+            }
+            else
+            {
+                throw new Exception(string.Format("广播事件错误，事件{0}对应委托具有不同的类型", eventType));
+            }
+        }
+    }
+
+    /// <summary>
+    /// 广播监听，两个参数
+    /// </summary>
+    /// <param name="eventType"></param>
+    public static void Broadcast<T, X, Y>(EventDefine eventType, T arg1, X arg2, Y arg3)
+    {
+        Delegate d;
+        if (m_EventTable.TryGetValue(eventType, out d))
+        {
+            CallBack<T, X, Y> callBack = d as CallBack<T, X, Y>;
+            if (callBack != null)
+            {
+                callBack(arg1, arg2, arg3);
+            }
+            else
+            {
+                throw new Exception(string.Format("广播事件错误，事件{0}对应委托具有不同的类型", eventType));
+            }
+        }
+    }
+
+    /// <summary>
+    /// 广播监听，两个参数
+    /// </summary>
+    /// <param name="eventType"></param>
+    public static void Broadcast<T, X, Y, Z>(EventDefine eventType, T arg1, X arg2, Y arg3, Z arg4)
+    {
+        Delegate d;
+        if (m_EventTable.TryGetValue(eventType, out d))
+        {
+            CallBack<T, X, Y, Z> callBack = d as CallBack<T, X, Y, Z>;
+            if (callBack != null)
+            {
+                callBack(arg1, arg2, arg3, arg4);
             }
             else
             {

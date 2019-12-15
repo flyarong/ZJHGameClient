@@ -7,6 +7,8 @@ using DG.Tweening;
 
 public class SelfManager_Stand : BaseManager_Stand
 {
+    public AudioClip clip_Start;
+    public AudioClip clip_GiveUp;
 
     private GameObject go_BottomButton;
     private Text txt_UserName;
@@ -23,6 +25,10 @@ public class SelfManager_Stand : BaseManager_Stand
     private Toggle tog_2;
     private Toggle tog_5;
     private Toggle tog_10;
+    private GameObject go_CompareBtns;
+    private Button btn_CompareLeft;
+    private Button btn_CompareRight;
+    private AudioSource m_AudioSource;
 
     private void Awake()
     {
@@ -33,15 +39,39 @@ public class SelfManager_Stand : BaseManager_Stand
 
     private void FixedUpdate()
     {
-        if (m_Time <= 0)
+        if (tog_2.isOn)
         {
-            //倒计时结束
-            //默认当作跟注处理  TODO
-            OnFollowButtonClick();
-            m_Time = 60;
+            tog_2.GetComponent<Image>().color = Color.gray;
+            tog_5.GetComponent<Image>().color = Color.white;
+            tog_10.GetComponent<Image>().color = Color.white;
+        }else if (tog_5.isOn)
+        {
+            tog_2.GetComponent<Image>().color = Color.white;
+            tog_5.GetComponent<Image>().color = Color.gray;
+            tog_10.GetComponent<Image>().color = Color.white;
+        }else if (tog_10.isOn)
+        {
+            tog_2.GetComponent<Image>().color = Color.white;
+            tog_5.GetComponent<Image>().color = Color.white;
+            tog_10.GetComponent<Image>().color = Color.gray;
         }
+
         if (m_IsStartStakes)
         {
+            if (m_ZJHManager.IsSelfWin())
+            {
+                m_ZJHManager.SelfWin();
+                m_IsStartStakes = false;
+                return;
+            }
+
+            if (m_Time <= 0)
+            {
+                //倒计时结束
+                //默认当作跟注处理  TODO
+                OnFollowButtonClick();
+                m_Time = 60;
+            }
             m_Timer += Time.deltaTime;
             if (m_Timer >= 1)
             {
@@ -61,7 +91,7 @@ public class SelfManager_Stand : BaseManager_Stand
     {
         //牌的间隔
         m_CardPointX = -70f;
-
+        m_AudioSource = GetComponent<AudioSource>();
         m_StakesCountHint = transform.Find("StakesCountHint").GetComponent<StakesCountHint>();
         m_ZJHManager = GetComponentInParent<ZJHManager_Stand>();
         go_BottomButton = transform.Find("BottomButton").gameObject;
@@ -84,14 +114,34 @@ public class SelfManager_Stand : BaseManager_Stand
         tog_2 = transform.Find("BottomButton/tog_2").GetComponent<Toggle>();
         tog_5 = transform.Find("BottomButton/tog_5").GetComponent<Toggle>();
         tog_10 = transform.Find("BottomButton/tog_10").GetComponent<Toggle>();
+        go_CompareBtns = transform.Find("CompareBtns").gameObject;
+        btn_CompareLeft = go_CompareBtns.transform.Find("btn_CompareLeft").GetComponent<Button>();
+        btn_CompareRight = go_CompareBtns.transform.Find("btn_CompareRight").GetComponent<Button>();
+
+
+        btn_LookCard.GetComponent<Image>().alphaHitTestMinimumThreshold = 0.5f;
+        btn_FollowStakes.GetComponent<Image>().alphaHitTestMinimumThreshold = 0.5f;
+        btn_AddStakes.GetComponent<Image>().alphaHitTestMinimumThreshold = 0.5f;
+        btn_CompareCard.GetComponent<Image>().alphaHitTestMinimumThreshold = 0.5f;
+        btn_GiveUp.GetComponent<Image>().alphaHitTestMinimumThreshold = 0.5f;
+        tog_2.GetComponent<Image>().alphaHitTestMinimumThreshold = 0.5f;
+        tog_5.GetComponent<Image>().alphaHitTestMinimumThreshold = 0.5f;
+        tog_10.GetComponent<Image>().alphaHitTestMinimumThreshold = 0.5f;
 
         btn_LookCard.onClick.AddListener(OnLookCardButtonClick);
         btn_FollowStakes.onClick.AddListener(OnFollowButtonClick);
+        btn_GiveUp.onClick.AddListener(OnGiveUpCardButtonClick);
+        btn_AddStakes.onClick.AddListener(OnAddButtonClick);
+        btn_CompareCard.onClick.AddListener(OnCompareButtonClick);
+        btn_CompareLeft.onClick.AddListener(OnCompareLeftButtonClick);
+        btn_CompareRight.onClick.AddListener(OnCompareRightButtonClick);
+
 
         go_BottomButton.SetActive(false);
         img_Banker.gameObject.SetActive(false);
         txt_GiveUp.SetActive(false);
         go_CountDown.SetActive(false);
+        go_CompareBtns.SetActive(false);
         btn_Ready.onClick.AddListener(() =>
         {
             OnReadyButtonClick();
@@ -104,6 +154,95 @@ public class SelfManager_Stand : BaseManager_Stand
             txt_UserName.text = Models.GameModel.userDto.UserName;
             txt_CoinCount.text = Models.GameModel.userDto.CoinCount.ToString();
         }
+    }
+
+    /// <summary>
+    /// 与左边玩家比牌点击
+    /// </summary>
+    private void OnCompareLeftButtonClick()
+    {
+        m_ZJHManager.SelfComparedLeft();
+        SetBottomButtonInteractable(false);
+        go_CompareBtns.SetActive(false);
+    }
+
+    /// <summary>
+    /// 与右边玩家比牌点击
+    /// </summary>
+    private void OnCompareRightButtonClick()
+    {
+        m_ZJHManager.SelfCompareRight();
+        SetBottomButtonInteractable(false);
+        go_CompareBtns.SetActive(false);
+    }
+
+    /// <summary>
+    /// 比牌点击按钮
+    /// </summary>
+    private void OnCompareButtonClick()
+    {
+        go_CompareBtns.SetActive(true);
+        if (m_ZJHManager.LeftIsGiveUp)
+        {
+            btn_CompareLeft.gameObject.SetActive(true);
+        }
+        else
+        {
+            btn_CompareLeft.gameObject.SetActive(false);
+        }
+
+        if (m_ZJHManager.RightIsGiveUp)
+        {
+            btn_CompareRight.gameObject.SetActive(true);
+        }
+        else
+        {
+            btn_CompareRight.gameObject.SetActive(false);
+        }
+    }
+
+    /// <summary>
+    /// 加注按钮点击
+    /// </summary>
+    private void OnAddButtonClick()
+    {
+        if (tog_2.isOn)
+        {
+            StakesAfter(m_ZJHManager.Stakes(m_ZJHManager.Stakes(0) * 1), "不看");
+        }
+        else if (tog_5.isOn)
+        {
+            StakesAfter(m_ZJHManager.Stakes(m_ZJHManager.Stakes(0) * 4), "不看");
+        }
+        else if (tog_10.isOn)
+        {
+            StakesAfter(m_ZJHManager.Stakes(m_ZJHManager.Stakes(0) * 9), "不看");
+        }
+        m_IsStartStakes = false;
+        go_CountDown.SetActive(false);
+        SetBottomButtonInteractable(false);
+        m_ZJHManager.SetNextPlayerStakes();
+    }
+
+    /// <summary>
+    /// 弃牌按钮点击
+    /// </summary>
+    private void OnGiveUpCardButtonClick()
+    {
+        m_AudioSource.clip = clip_GiveUp;
+        m_AudioSource.Play();
+        m_IsStartStakes = false;
+        go_BottomButton.SetActive(false);
+        go_CountDown.SetActive(false);
+        m_IsGiveUpCard = true;
+        txt_GiveUp.SetActive(true);
+
+        foreach (var item in go_SpawnCardList)
+        {
+            Destroy(item);
+        }
+
+        m_ZJHManager.SetNextPlayerStakes();
     }
 
     /// <summary>
@@ -149,6 +288,8 @@ public class SelfManager_Stand : BaseManager_Stand
 
     private void OnReadyButtonClick()
     {
+        m_AudioSource.clip = clip_Start;
+        m_AudioSource.Play();
         //更新总下注信息显示
         m_StakesSum += Models.GameModel.BottomStakes;
         txt_StakesSum.text = m_StakesSum.ToString();
@@ -216,5 +357,18 @@ public class SelfManager_Stand : BaseManager_Stand
         go.GetComponent<RectTransform>().DOLocalMove(new Vector3(m_CardPointX, 0, 0), duration);
         go_SpawnCardList.Add(go);
         m_CardPointX += 70;
+    }
+
+    public override void Lose()
+    {
+        OnGiveUpCardButtonClick();
+    }
+
+    public override void Win()
+    {
+        m_IsStartStakes = false;
+        go_CountDown.SetActive(false);
+        m_ZJHManager.m_CurrentStakesIndex = 0;
+        m_ZJHManager.SetNextPlayerStakes();
     }
 }

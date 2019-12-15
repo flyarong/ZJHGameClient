@@ -49,6 +49,16 @@ public abstract class ComputerBaseManager_Stand : BaseManager_Stand {
         img_HeadIcon.sprite = ResourceManager.GetSprite(name);
     }
 
+    public override void Lose()
+    {
+        GiveUpCard();
+    }
+
+    public override void Win()
+    {
+        
+    }
+
     /// <summary>
     /// 下注
     /// </summary>
@@ -101,9 +111,10 @@ public abstract class ComputerBaseManager_Stand : BaseManager_Stand {
             else
             {
                 //弃牌TODO
+                GiveUpCard();
             }
         }
-        else if (m_CardType == CardType.Baozi || m_CardType == CardType.Max)
+        else if (m_CardType == CardType.Baozi || m_CardType == CardType.Max || m_CardType == CardType.Jinhua)
         {
             StakesAfter(m_ZJHManager.Stakes(Random.Range(3, 6)), "不看");
         }
@@ -135,15 +146,24 @@ public abstract class ComputerBaseManager_Stand : BaseManager_Stand {
 
     private void FixedUpdate()
     {
-        if (m_Time <= 0)
-        {
-            //倒计时结束
-            //默认当作跟注处理  TODO
-            m_IsStartStakes = false;
-            m_Time = 60;
-        }
+
         if (m_IsStartStakes)
         {
+
+            if (IsWin())
+            {
+                m_IsStartStakes = false;
+                return;
+            }
+
+            if (m_Time <= 0)
+            {
+                //倒计时结束
+                //默认当作跟注处理  TODO
+                m_IsStartStakes = false;
+                m_Time = 60;
+            }
+
             //倒计时结束，下注
             if (m_RandomWaitStakesTime <= 0)
             {
@@ -210,4 +230,10 @@ public abstract class ComputerBaseManager_Stand : BaseManager_Stand {
     }
 
     public abstract void Compare();
+
+    /// <summary>
+    /// 判断是否胜利
+    /// </summary>
+    /// <returns></returns>
+    public abstract bool IsWin();
 }
