@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Protocol.Code;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,7 +22,8 @@ public class SelfManager_Net : MonoBehaviour {
     private Text txt_CoinCount;
 
     private Button btn_Ready;
-    private GameObject txt_GiveUp;
+    private Button btn_UnReady;
+    private Text txt_Hint;
 
     private Button btn_LookCard;
     private Button btn_FollowStakes;
@@ -39,9 +41,15 @@ public class SelfManager_Net : MonoBehaviour {
     //牌的间隔
     protected float m_CardPointX = -70f;
 
-    private void AWake()
+    private void Awake()
     {
+        EventCenter.AddListener(EventDefine.StartGame, StartGame);
         Init();
+    }
+
+    private void OnDestory()
+    {
+        EventCenter.RemoveListener(EventDefine.StartGame, StartGame);
     }
 
     private void Init()
@@ -58,7 +66,8 @@ public class SelfManager_Net : MonoBehaviour {
         go_CountDown = transform.Find("CountDown").gameObject;
         txt_CountDown = transform.Find("CountDown/txt_CountDown").GetComponent<Text>();
         btn_Ready = transform.Find("btn_Ready").GetComponent<Button>();
-        txt_GiveUp = transform.Find("txt_GiveUp").gameObject;
+        btn_UnReady = transform.Find("btn_UnReady").GetComponent<Button>();
+        txt_Hint = transform.Find("txt_Hint").GetComponent<Text>();
         cardPoints = transform.Find("CardPoints");
 
         btn_LookCard = transform.Find("BottomButton/btn_LookCard").GetComponent<Button>();
@@ -92,12 +101,22 @@ public class SelfManager_Net : MonoBehaviour {
 
         go_BottomButton.SetActive(false);
         img_Banker.gameObject.SetActive(false);
-        txt_GiveUp.SetActive(false);
+        txt_Hint.gameObject.SetActive(false);
         go_CountDown.SetActive(false);
         go_CompareBtns.SetActive(false);
+        btn_CompareLeft.gameObject.SetActive(false);
+        btn_CompareRight.gameObject.SetActive(false);
+        btn_UnReady.gameObject.SetActive(false);
+
+
         btn_Ready.onClick.AddListener(() =>
         {
             OnReadyButtonClick();
+        });
+
+        btn_UnReady.onClick.AddListener(() =>
+        {
+            OnUnReadyButtonClick();
         });
 
         txt_StakesSum.text = "0";
@@ -170,7 +189,30 @@ public class SelfManager_Net : MonoBehaviour {
     /// </summary>
     private void OnReadyButtonClick()
     {
-
+        btn_Ready.gameObject.SetActive(false);
+        txt_Hint.text = "已准备";
+        txt_Hint.gameObject.SetActive(true);
+        btn_UnReady.gameObject.SetActive(true);
+        NetMsgCenter.Instance.SendMsg(OpCode.Match, MatchCode.Read_CREQ, (int)Models.GameModel.RoomType);
     }
-    
+
+    /// <summary>
+    /// 取消准备
+    /// </summary>
+    private void OnUnReadyButtonClick()
+    {
+        btn_Ready.gameObject.SetActive(true);
+        txt_Hint.gameObject.SetActive(false);
+        btn_UnReady.gameObject.SetActive(false);
+        NetMsgCenter.Instance.SendMsg(OpCode.Match, MatchCode.UnReady_CREQ, (int)Models.GameModel.RoomType);
+    }
+
+    /// <summary>
+    /// 开始游戏
+    /// </summary>
+    private void StartGame()
+    {
+        txt_Hint.gameObject.SetActive(false);
+        btn_UnReady.gameObject.SetActive(false);
+    }
 }

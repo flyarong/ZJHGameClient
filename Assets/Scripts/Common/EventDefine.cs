@@ -11,4 +11,9 @@
     VSAI,
     VSWithSelf,
     GameOver,
+
+
+    //联网部分
+    RefreshUI,
+    StartGame,
 }

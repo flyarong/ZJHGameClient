@@ -11,6 +11,11 @@ public class GameModel
     public UserDto userDto { get; set; }
 
     /// <summary>
+    /// 匹配房间传输模型
+    /// </summary>
+    public MatchRoomDto matchRoomDto { get; set; }
+
+    /// <summary>
     /// 底注
     /// </summary>
     public int BottomStakes { get; set; }
@@ -19,4 +24,9 @@ public class GameModel
     /// 顶注
     /// </summary>
     public int TopStakes { get; set; }
+
+    /// <summary>
+    /// 游戏房间类型
+    /// </summary>
+    public RoomType RoomType { get; set; }
 }

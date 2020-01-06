@@ -53,9 +53,11 @@
      <Compile Include="Assets\Scripts\Common\EventCenter.cs" />
      <Compile Include="Assets\Scripts\Common\EventDefine.cs" />
      <Compile Include="Assets\Scripts\Common\ResourceManager.cs" />
+     <Compile Include="Assets\Scripts\Common\RoomType.cs" />
      <Compile Include="Assets\Scripts\Game\Net\LeftManager_Net.cs" />
      <Compile Include="Assets\Scripts\Game\Net\RightManager_Net.cs" />
      <Compile Include="Assets\Scripts\Game\Net\SelfManager_Net.cs" />
+     <Compile Include="Assets\Scripts\Game\Net\ZJHManager_Net.cs" />
      <Compile Include="Assets\Scripts\Game\StandAlone\BaseManager_Stand.cs" />
      <Compile Include="Assets\Scripts\Game\StandAlone\ComputerBaseManager_Stand.cs" />
      <Compile Include="Assets\Scripts\Game\StandAlone\GameOverPanel_Stand.cs" />
